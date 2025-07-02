@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turnero Logístico - Mabe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/estilos.css" />
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4 text-gray-800">
+  <!-- Encabezado -->
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold">📦 Turnero Digital - Logística</h1>
+    <p class="text-sm text-gray-600">Planta de Lavadoras - Mabe</p>
+  </header>
+
+  <!-- Barra de acciones -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+    <button onclick="abrirModal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      + Agregar Turno
+    </button>
+    <button onclick="cargarTurnos()" class="text-blue-700 font-medium hover:underline">🔄 Actualizar turnos</button>
+  </div>
+
+
+  <!-- Tabla de turnos -->
+  <div class="bg-white rounded-lg shadow overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="bg-blue-100 text-gray-700">
+        <tr>
+          <th class="px-4 py-2">Fecha</th>
+          <th class="px-4 py-2">Hora</th>
+          <th class="px-4 py-2">Destino</th>
+          <th class="px-4 py-2">Transporte</th>
+          <th class="px-4 py-2">Empresa</th>
+          <th class="px-4 py-2">Circuito</th>
+          <th class="px-4 py-2">Chofer</th>
+          <th class="px-4 py-2">Estado</th>
+          <th class="px-4 py-2 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpo-turnos" class="bg-white">
+        <!-- Turnos se cargan dinámicamente -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalTurno" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg relative">
+      <h2 class="text-xl font-bold mb-4">Agregar Turno</h2>
+      <button onclick="cerrarModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+      <h2 id="tituloModal" class="text-xl font-bold mb-4">Nuevo Turno</h2>
+      
+      <form id="form-turno" class="grid md:grid-cols-2 gap-4">
+        <div class="md:col-span-2">
+      <label class="text-sm font-medium">Estado</label>
+        <select name="estado" class="w-full border rounded px-2 py-1">
+          <option value="">Seleccionar</option>
+          <option value="Planificado">Planificado</option>
+          <option value="Pikeado">Pikeado</option>
+          <option value="Cargado">Cargado</option>
+        </select>
+      </div>
+
+        <div>
+          <label class="text-sm font-medium">Fecha</label>
+          <input type="date" name="fecha" required class="w-full border rounded px-2 py-1">
+        </div>
+        <div>
+          <label class="text-sm font-medium">Hora</label>
+          <input type="time" name="hora" required class="w-full border rounded px-2 py-1">
+        </div>
+        <div>
+          <label class="text-sm font-medium">Destino</label>
+          <input type="text" name="destino" required class="w-full border rounded px-2 py-1">
+        </div>
+        <div>
+          <label class="text-sm font-medium">Tipo de Transporte</label>
+          <select name="transporte_tipo" required class="w-full border rounded px-2 py-1">
+            <option value="">Seleccionar</option>
+            <option value="Propio">Propio</option>
+            <option value="Terceros">Terceros</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium">Empresa (si es tercero)</label>
+          <input type="text" name="empresa_tercero" class="w-full border rounded px-2 py-1">
+        </div>
+        <div>
+          <label class="text-sm font-medium">Circuito</label>
+          <select name="circuito" required class="w-full border rounded px-2 py-1">
+            <option value="">Seleccionar</option>
+            <option value="Ida">Ida</option>
+            <option value="Ida y Vuelta">Ida y Vuelta</option>
+            <option value="Reparto">Reparto</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="text-sm font-medium">Chofer</label>
+          <input type="text" name="chofer" required class="w-full border rounded px-2 py-1">
+        </div>
+        <div class="md:col-span-2">
+          <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Guardar Turno</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script principal -->
+  <script src="JS/main.js"></script>
+</body>
+</html>
