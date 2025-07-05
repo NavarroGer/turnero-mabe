@@ -22,6 +22,32 @@
     </button>
     <button onclick="cargarTurnos()" class="text-blue-700 font-medium hover:underline">🔄 Actualizar turnos</button>
   </div>
+  
+<!-- Filtro de búsqueda -->
+<div class="bg-white p-4 rounded shadow mb-4">
+  <form id="form-filtro" class="grid md:grid-cols-4 gap-4 items-end">
+    <div>
+      <label class="text-sm font-medium">Fecha desde</label>
+      <input type="date" name="fecha_desde" class="w-full border rounded px-2 py-1">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Fecha hasta</label>
+      <input type="date" name="fecha_hasta" class="w-full border rounded px-2 py-1">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Destino</label>
+      <input type="text" name="destino" placeholder="Ej: Córdoba" class="w-full border rounded px-2 py-1">
+    </div>
+    <div>
+      <label class="text-sm font-medium">Chofer</label>
+      <input type="text" name="chofer" placeholder="Ej: Juan Pérez" class="w-full border rounded px-2 py-1">
+    </div>
+    <div class="md:col-span-4 flex justify-end gap-2 mt-2">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">🔍 Aplicar Filtros</button>
+      <button type="button" onclick="limpiarFiltros()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">❌ Limpiar</button>
+    </div>
+  </form>
+</div>
 
 
   <!-- Tabla de turnos -->

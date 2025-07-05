@@ -154,5 +154,60 @@ function editarTurno(id) {
     });
 }
 
+//Funcion para aplicar filtros
+function aplicarFiltros() {
+  const fecha = document.getElementById('filtro-fecha').value;
+  const destino = document.getElementById('filtro-destino').value;
+  const chofer = document.getElementById('filtro-chofer').value;
+
+  const params = new URLSearchParams();
+
+  if (fecha) params.append('fecha', fecha);
+  if (destino) params.append('destino', destino);
+  if (chofer) params.append('chofer', chofer);
+
+  fetch(`../backend/obtener_turnos.php?${params.toString()}`)
+    .then(response => response.json())
+    .then(data => {
+      const cuerpo = document.getElementById('cuerpo-turnos');
+      cuerpo.innerHTML = '';
+
+      if (data.length === 0) {
+        cuerpo.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-gray-500">No se encontraron turnos.</td></tr>';
+        return;
+      }
+
+      data.forEach(turno => {
+        const fila = document.createElement('tr');
+        let colorEstado = '';
+
+        if (turno.estado === 'Pikeado') colorEstado = 'estado-pikeado';
+        else if (turno.estado === 'Cargado') colorEstado = 'estado-cargado';
+        else colorEstado = 'estado-planificado';
+
+        fila.innerHTML = `
+          <td class="border px-4 py-2">${turno.fecha}</td>
+          <td class="border px-4 py-2">${turno.hora}</td>
+          <td class="border px-4 py-2">${turno.destino}</td>
+          <td class="border px-4 py-2">${turno.transporte_tipo}</td>
+          <td class="border px-4 py-2">${turno.empresa_tercero || '-'}</td>
+          <td class="border px-4 py-2">${turno.circuito}</td>
+          <td class="border px-4 py-2">${turno.chofer}</td>
+          <td class="border px-4 py-2 ${colorEstado}">${turno.estado}</td>
+          <td class="border px-4 py-2">
+            <button onclick="editarTurno(${turno.id})" class="text-blue-600 hover:underline">Editar</button>
+            <button onclick="eliminarTurno(${turno.id})" class="text-red-600 hover:underline ml-2">Eliminar</button>
+          </td>
+        `;
+        cuerpo.appendChild(fila);
+      });
+    })
+    .catch(error => {
+      console.error('Error al aplicar filtros:', error);
+      alert('Error al aplicar filtros');
+    });
+}
+
+
 
 
