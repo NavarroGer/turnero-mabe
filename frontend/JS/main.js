@@ -1,58 +1,110 @@
 // Cargar turnos al iniciar
+// --- Inicialización ---
 document.addEventListener('DOMContentLoaded', () => {
   cargarTurnos();
+
+  const btnFiltrar = document.getElementById('btn-filtrar');
+  if (btnFiltrar) btnFiltrar.addEventListener('click', aplicarFiltros);
+
+  const btnLimpiar = document.getElementById('btn-limpiar');
+  if (btnLimpiar) btnLimpiar.addEventListener('click', () => {
+    // limpiar inputs
+    document.querySelector('[name="fecha_desde"]').value = '';
+    document.querySelector('[name="fecha_hasta"]').value = '';
+    document.querySelector('[name="destino"]').value = '';
+    document.querySelector('[name="chofer"]').value = '';
+    cargarTurnos();
+  });
+
 });
 
-// Cargar turnos desde el backend
+// --- Cargar todos los turnos ---
 function cargarTurnos() {
-  fetch('../backend/obtener_turnos.php')  // ✅ este es el correcto para cargar todos
-
-    .then(response => response.json())
+  fetch('../backend/obtener_turnos.php')
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
     .then(data => {
-      
-      const cuerpo = document.getElementById('cuerpo-turnos');
-      cuerpo.innerHTML = '';
-
-      if (data.length === 0) {
-        cuerpo.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-gray-500">No hay turnos registrados.</td></tr>';
-        return;
-      }
-
-      data.forEach(turno => {
-        const fila = document.createElement('tr');
-
-    let claseEstado = '';
-      if (turno.estado === 'Planificado') claseEstado = 'estado-planificado';
-      if (turno.estado === 'Pikeado') claseEstado = 'estado-pikeado';
-      if (turno.estado === 'Cargado') claseEstado = 'estado-cargado';
-
-
-        fila.innerHTML = `
-          <td class="border px-4 py-2">${turno.fecha}</td>
-          <td class="border px-4 py-2">${turno.hora}</td>
-          <td class="border px-4 py-2">${turno.destino}</td>
-          <td class="border px-4 py-2">${turno.transporte_tipo}</td>
-          <td class="border px-4 py-2">${turno.empresa_tercero || '-'}</td>
-          <td class="border px-4 py-2">${turno.circuito}</td>
-          <td class="border px-4 py-2">${turno.chofer}</td>
-          <td class="border px-4 py-2 ${claseEstado}">${turno.estado}</td>
-
-          
-          <td class="border px-4 py-2">
-            <button onclick="editarTurno(${turno.id})" class="text-blue-600 hover:underline">Editar</button>
-            <button onclick="eliminarTurno(${turno.id})" class="text-red-600 hover:underline ml-2">Eliminar</button>
-          </td>
-        `;
-        cuerpo.appendChild(fila);
-      });
+      renderizarTurnos(data);
     })
     .catch(error => {
       console.error('Error al cargar turnos:', error);
-      alert('Error al obtener turnos');
+      const cuerpo = document.getElementById('cuerpo-turnos');
+      cuerpo.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-red-600">
+        Error al obtener turnos: ${error.message}
+      </td></tr>`;
     });
 }
 
+// --- Aplicar filtros ---
+function aplicarFiltros() {
+  const fechaDesde = document.querySelector('[name="fecha_desde"]')?.value;
+  const fechaHasta = document.querySelector('[name="fecha_hasta"]')?.value;
+  const destino = document.querySelector('[name="destino"]')?.value;
+  const chofer = document.querySelector('[name="chofer"]')?.value;
+  const estado = document.querySelector('[name="estado"]')?.value;
 
+  const params = new URLSearchParams();
+  if (fechaDesde) params.append('fecha_desde', fechaDesde);
+  if (fechaHasta) params.append('fecha_hasta', fechaHasta);
+  if (destino) params.append('destino', destino);
+  if (chofer) params.append('chofer', chofer);
+  if (estado) params.append('estado', estado);  // ✅ este es el fix
+
+  fetch(`../backend/obtener_turnos.php?${params.toString()}`)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      renderizarTurnos(data);
+    })
+    .catch(err => {
+      console.error('Error al aplicar filtros:', err);
+      const cuerpo = document.getElementById('cuerpo-turnos');
+      cuerpo.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-red-600">
+        Error al aplicar filtros: ${err.message}
+      </td></tr>`;
+    });
+}
+
+// --- Renderizado compartido ---
+function renderizarTurnos(data) {
+  const cuerpo = document.getElementById('cuerpo-turnos');
+  cuerpo.innerHTML = '';
+
+  if (!Array.isArray(data) || data.length === 0) {
+    cuerpo.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-gray-500">No se encontraron turnos.</td></tr>';
+    return;
+  }
+
+  data.forEach(turno => {
+    const fila = document.createElement('tr');
+
+    let claseEstado = '';
+    if (turno.estado === 'Planificado') claseEstado = 'estado-planificado';
+    if (turno.estado === 'Pikeado') claseEstado = 'estado-pikeado';
+    if (turno.estado === 'Cargado') claseEstado = 'estado-cargado';
+
+    fila.innerHTML = `
+      <td class="border px-4 py-2">${turno.fecha}</td>
+      <td class="border px-4 py-2">${turno.hora}</td>
+      <td class="border px-4 py-2">${turno.destino}</td>
+      <td class="border px-4 py-2">${turno.transporte_tipo}</td>
+      <td class="border px-4 py-2">${turno.empresa_tercero || '-'}</td>
+      <td class="border px-4 py-2">${turno.circuito}</td>
+      <td class="border px-4 py-2">${turno.chofer}</td>
+      <td class="border px-4 py-2 ${claseEstado}">${turno.estado}</td>
+      <td class="border px-4 py-2">
+        <button onclick="editarTurno(${turno.id})" class="text-blue-600 hover:underline">Editar</button>
+        <button onclick="eliminarTurno(${turno.id})" class="text-red-600 hover:underline ml-2">Eliminar</button>
+      </td>
+    `;
+    cuerpo.appendChild(fila);
+  });
+}
+                    
 // Guardar nuevo turno y Editar turno
 document.getElementById('form-turno').addEventListener('submit', function (e) {
   e.preventDefault();
@@ -154,59 +206,7 @@ function editarTurno(id) {
     });
 }
 
-//Funcion para aplicar filtros
-// function aplicarFiltros() {
-//   const fecha = document.getElementById('filtro-fecha').value;
-//   const destino = document.getElementById('filtro-destino').value;
-//   const chofer = document.getElementById('filtro-chofer').value;
 
-//   const params = new URLSearchParams();
-
-//   if (fecha) params.append('fecha', fecha);
-//   if (destino) params.append('destino', destino);
-//   if (chofer) params.append('chofer', chofer);
-
-//   fetch(`../backend/obtener_turnos.php?${params.toString()}`)
-//     .then(response => response.json())
-//     .then(data => {
-//       const cuerpo = document.getElementById('cuerpo-turnos');
-//       cuerpo.innerHTML = '';
-
-//       if (data.length === 0) {
-//         cuerpo.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-gray-500">No se encontraron turnos.</td></tr>';
-//         return;
-//       }
-
-//       data.forEach(turno => {
-//         const fila = document.createElement('tr');
-//         let colorEstado = '';
-
-//         if (turno.estado === 'Pikeado') colorEstado = 'estado-pikeado';
-//         else if (turno.estado === 'Cargado') colorEstado = 'estado-cargado';
-//         else colorEstado = 'estado-planificado';
-
-//         fila.innerHTML = `
-//           <td class="border px-4 py-2">${turno.fecha}</td>
-//           <td class="border px-4 py-2">${turno.hora}</td>
-//           <td class="border px-4 py-2">${turno.destino}</td>
-//           <td class="border px-4 py-2">${turno.transporte_tipo}</td>
-//           <td class="border px-4 py-2">${turno.empresa_tercero || '-'}</td>
-//           <td class="border px-4 py-2">${turno.circuito}</td>
-//           <td class="border px-4 py-2">${turno.chofer}</td>
-//           <td class="border px-4 py-2 ${colorEstado}">${turno.estado}</td>
-//           <td class="border px-4 py-2">
-//             <button onclick="editarTurno(${turno.id})" class="text-blue-600 hover:underline">Editar</button>
-//             <button onclick="eliminarTurno(${turno.id})" class="text-red-600 hover:underline ml-2">Eliminar</button>
-//           </td>
-//         `;
-//         cuerpo.appendChild(fila);
-//       });
-//     })
-//     .catch(error => {
-//       console.error('Error al aplicar filtros:', error);
-//       alert('Error al aplicar filtros');
-//     });
-//}
 
 
 

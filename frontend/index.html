@@ -22,32 +22,60 @@
     </button>
     <button onclick="cargarTurnos()" class="text-blue-700 font-medium hover:underline">🔄 Actualizar turnos</button>
   </div>
-  
-<!-- Filtro de búsqueda
-<div class="bg-white p-4 rounded shadow mb-4">
-  <form id="form-filtro" class="grid md:grid-cols-4 gap-4 items-end">
+
+<!--Filtros-->
+<div class="bg-white p-6 rounded-lg shadow-md mb-4">
+  <div class="grid md:grid-cols-5 gap-4 items-end">
+    
     <div>
-      <label class="text-sm font-medium">Fecha desde</label>
-      <input type="date" name="fecha_desde" class="w-full border rounded px-2 py-1">
+      <label class="text-sm font-semibold text-gray-600">Fecha desde</label>
+      <input type="date" name="fecha_desde" 
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
     </div>
+    
     <div>
-      <label class="text-sm font-medium">Fecha hasta</label>
-      <input type="date" name="fecha_hasta" class="w-full border rounded px-2 py-1">
+      <label class="text-sm font-semibold text-gray-600">Fecha hasta</label>
+      <input type="date" name="fecha_hasta" 
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
     </div>
+    
     <div>
-      <label class="text-sm font-medium">Destino</label>
-      <input type="text" name="destino" placeholder="Ej: Córdoba" class="w-full border rounded px-2 py-1">
+      <label class="text-sm font-semibold text-gray-600">Destino</label>
+      <input type="text" name="destino" placeholder="Ej: Rosario" 
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
     </div>
+    
     <div>
-      <label class="text-sm font-medium">Chofer</label>
-      <input type="text" name="chofer" placeholder="Ej: Juan Pérez" class="w-full border rounded px-2 py-1">
+      <label class="text-sm font-semibold text-gray-600">Chofer</label>
+      <input type="text" name="chofer" placeholder="Ej: Pérez" 
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
     </div>
-    <div class="md:col-span-4 flex justify-end gap-2 mt-2">
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">🔍 Aplicar Filtros</button>
-      <button type="button" onclick="limpiarFiltros()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">❌ Limpiar</button>
+    
+    <div>
+      <label class="text-sm font-semibold text-gray-600">Estado</label>
+      <select name="estado" 
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
+        <option value="">Todos</option>
+        <option value="Planificado">Planificado</option>
+        <option value="Pikeado">Pikeado</option>
+        <option value="Cargado">Cargado</option>
+      </select>
     </div>
-  </form>
-</div> -->
+
+    <div class="md:col-span-5 flex gap-3 justify-end">
+      <button type="button" id="btn-filtrar" 
+        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow transition-all duration-200">
+        Aplicar
+      </button>
+      <button type="button" id="btn-limpiar" 
+        class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg shadow transition-all duration-200">
+        Limpiar
+      </button>
+    </div>
+
+  </div>
+</div>
+
 
 
   <!-- Tabla de turnos -->
